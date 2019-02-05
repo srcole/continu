@@ -3,6 +3,8 @@
 .ipynb_checkpoints/
 ub/
 *.txt
+!requirements.txt
+!runtime.txt
 *.csv
 *.pkl
 *.png
