@@ -22,7 +22,6 @@ cnx = sqlite3.connect('continu_dash.db')
 
 df_user_stats = pd.read_sql_query("SELECT * FROM users", cnx)
 df_trials = pd.read_sql_query("SELECT * FROM messages", cnx)
-df_trials['avg_ypred'] = df_trials['ypred_valid']
 
 
 ##############
@@ -94,7 +93,7 @@ def update_bar_rank(clickData):
     df_plt = df_plt.sort_values(by='adj_ypred', ascending=False)
 
     # Make user name
-    df_plt['user_name'] = ['User {:d}'.format(u) for u in df_plt['user']]
+    df_plt['user_name'] = ['User {:d} '.format(u) for u in df_plt['user']]
 
     # Determine selected user
     if clickData is None:
@@ -233,13 +232,6 @@ def make_fingerprint(clickData_user, clickData_trial):
             text=['{:s} delay = {:.0f}ms<br>User mean = {:.0f}ms'.format(dg, tt, meant) for dg, tt, meant in zip(df_plt2['feature'], df_plt2['trial_time'], df_plt2['mean'])],
             mode='markers',
             marker={'size': 6, 'color': "red"}),
-        # go.Scatter(
-        #     x=df_plt['feature'],
-        #     y=df_plt['mean'],
-        #     hoverinfo='none',
-        #     name='User {:d} average statistics'.format(user_selected),
-        #     line = {"color": "black"},
-        #     mode='lines'),
         go.Scatter(
             x=df_plt['feature'],
             y=df_plt['pc10'],
@@ -259,7 +251,7 @@ def make_fingerprint(clickData_user, clickData_trial):
         ],
 
         'layout': go.Layout(
-            yaxis={'title': 'Keystroke time (ms)', 'autorange': False, 'range': [-100, 800]},
+            yaxis={'title': 'Keystroke time (ms)', 'autorange': False, 'range': [-100, 1000]},
             xaxis={'title': 'Keystroke features',
                    'showticklabels': False,
                    'showgrid': False},
@@ -297,9 +289,11 @@ def update_timeseries_title(clickData):
 
     # Determine selected user
     if clickData is None:
-        return 'Select a user to see authentication of their recent messages'
+        return "Select a user to see their keystroke biometrics"
     else:
-        return "Authentication confidence for user {:d}'s recent messages".format(user_selected)
+        user_selected = clickData['points'][0]['id']
+
+    return "Authentication confidence for user {:d}'s recent messages".format(user_selected)
 
 
 # Run the Dash app
